@@ -74,6 +74,18 @@
                 <version>1.1.1</version>
         </dependency>
         
+        <dependency>
+                <groupId>com.r</groupId>
+                <artifactId>rengine</artifactId>
+                <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+                <groupId>com.r</groupId>
+                <artifactId>rserveengine</artifactId>
+                <version>1.0</version>
+        </dependency>
+        
     </dependencies>
 
     <properties>
@@ -85,6 +97,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+		          <jvmArguments>
+		            -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
+		          </jvmArguments>
+		        </configuration>
             </plugin>
         </plugins>
     </build>
