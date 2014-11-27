@@ -25,7 +25,7 @@ public class SearchingManager {
         for (ZillowPropertyDetailStage item : items) {
             String description = item.getHomeDescription();
             float tfIdf = getTfValue(key, description) * idf;
-            resultMap.put(tfIdf, item.getZpid());
+            resultMap.put(tfIdf, new Long(item.getZpid()));
             count++;
             System.out.print("item number:" + count + "\n");
         }

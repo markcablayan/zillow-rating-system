@@ -14,7 +14,7 @@ public class ZillowPropertyDetailStageMapper implements RowMapper<ZillowProperty
         zillowPropertyDetailStage.setHomeDescription(rs.getString("home_description"));
         zillowPropertyDetailStage.setImageCount(rs.getInt("image_count"));
         zillowPropertyDetailStage.setPageViewCount(rs.getLong("page_view_count"));
-        zillowPropertyDetailStage.setZpid(rs.getLong("zpid"));
+        zillowPropertyDetailStage.setZpid(rs.getInt("zpid"));
         return zillowPropertyDetailStage;
     }
 }

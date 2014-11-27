@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="dataSource"
+	        class="org.springframework.jdbc.datasource.DriverManagerDataSource">	 
+	        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+	        <property name="url" value="jdbc:mysql://localhost:3306/zillowdb" />
+	        <property name="username" value="root" />
+	        <property name="password" value="warri0rs" />
+	</bean>
+	
+	<bean id="zillowProperyDao" class="org.group.binary.dao.impl.ZillowPropertyDAOImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="rmanager" class="org.sjsu.cmpe.api.manager.RManager">
+	</bean>
+	
+	<bean id="pageViewPredictionManager" class="org.sjsu.cmpe.api.manager.PageViewPredictionManager">
+		<property name="rmanager" ref="rmanager" />
+	</bean>
+	
+	<bean id="algorithmController" class="org.sjsu.cmpe.AlgorithmController">
+		<property name="rmanager" ref="rmanager" />
+		<property name="pageViewPredictionManager" ref="pageViewPredictionManager" />
+	</bean>
+</beans>
