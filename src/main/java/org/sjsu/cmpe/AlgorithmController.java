@@ -1,5 +1,6 @@
 package org.sjsu.cmpe;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -14,7 +15,6 @@ import org.sjsu.cmpe.api.manager.PageViewPredictionManager;
 import org.sjsu.cmpe.api.manager.RManager;
 import org.sjsu.cmpe.api.manager.RestApiManager;
 import org.sjsu.cmpe.beans.ZillowProperty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +34,12 @@ public class AlgorithmController {
         XPathExpression<Element> expr = xFactory.compile("//response", Filters.element());
         //SAXBuilder builder = new SAXBuilder();
         List<Element> compElements = expr.evaluate(doc);
+        if(compElements.size() <= 0) {
+        	model.addAttribute("postPrivate", true);
+        	return null;
+        } else {
+        	model.addAttribute("postPrivate", false);
+        }
         Element e = null;
 		if(compElements != null && compElements.size() > 0)
 			e = compElements.get(0);
@@ -81,6 +87,7 @@ public class AlgorithmController {
         	model.addAttribute("addressState",addressState);
         	model.addAttribute("addressLatitude",addressLatitude);
         	model.addAttribute("addressLongitude",addressLongitude);
+        	
 
         	Double taxAssessment = toDouble(c.getChildText("taxAssessment"));
         	Integer finishedSqFt = toInteger(c.getChildText("finishedSqFt"));
@@ -110,6 +117,8 @@ public class AlgorithmController {
         	zp.setImageCount(imageCount);
         	zp.setPageViewCount(totalPageViewCount);
         	
+        	model.addAttribute("bedrooms",zp.getBedrooms());
+        	model.addAttribute("bathrooms",zp.getBathrooms());
         	
         	RConnection r = rmanager.getRConnection();
             if(r != null) {
@@ -132,7 +141,16 @@ public class AlgorithmController {
             		REXP prediction = r.eval("predict(fit,newdata)");
             		
             		try {
-            			pageViewPredictionManager.calculateVariableIncreaseImageCount(r, zp);
+            			HashMap<String,Double> imageAdjustedpageViewResults = pageViewPredictionManager.calculateVariableIncreaseImageCount(r, zp);
+            			HashMap<String,Double> bedroomAdjustedpageViewResults = pageViewPredictionManager.calculateVariableIncreaseBedroomCount(r, zp);
+            			HashMap<String,Double> bathroomAdjustedpageViewResults = pageViewPredictionManager.calculateVariableIncreaseBathroomCount(r, zp);
+            			Double predictedViewCount = (imageAdjustedpageViewResults.get("predictedViewCount") + bedroomAdjustedpageViewResults.get("predictedViewCount") + bathroomAdjustedpageViewResults.get("predictedViewCount")) / 3;
+            			model.addAttribute("newImageCount", imageAdjustedpageViewResults.get("newImageCount"));
+            			model.addAttribute("newBedroomCount", bedroomAdjustedpageViewResults.get("newBedroomCount"));
+            			model.addAttribute("newBathroomCount", bathroomAdjustedpageViewResults.get("newBathroomCount"));
+            			
+            			model.addAttribute("predictedViewCountIncrease",predictedViewCount.intValue() - zp.getPageViewCount());
+            			
 						System.out.println(prediction.asDouble() + PageViewPredictionManager.MODEL_DELTA_VALUE);
 					} catch (Exception e1) {
 						e1.printStackTrace();

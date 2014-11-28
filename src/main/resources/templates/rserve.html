@@ -4,13 +4,29 @@
     <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
-<body>
-    <p th:text="'Image Count: ' + ${imageCount}" />
-    <p th:text="'Home Description: ' + ${homeDescription}" />
-    <p th:text="'Current View Count: ' + ${totalPageViewCount}" />
-    <p th:text="'Address Street: ' + ${addressStreet}" />
-    <p th:text="'Zip Code: ' + ${addressZipCode}" />
-    <p th:text="'City: ' + ${addressCity}" />
-    <p th:text="'State: ' + ${addressState}" />
+<body th:if="${postPrivate == true}">
+	<h3>Your post is set to private. To run the Zillow Analyzer, please set your post to public.</h3>
 </body>
+<body th:if="${postPrivate == false}">
+	<div id="orignal-values">
+	   <p th:text="'Image Count: ' + ${imageCount}" />
+	   <p th:text="'Bedrooms: ' + ${bedrooms}" />
+	   <p th:text="'Bathrooms: ' + ${bathrooms}" />
+	   <p th:text="'Home Description: ' + ${homeDescription}" />
+	   <p th:text="'Current View Count: ' + ${totalPageViewCount}" />
+	   <p th:text="'Address Street: ' + ${addressStreet}" />
+	   <p th:text="'Zip Code: ' + ${addressZipCode}" />
+	   <p th:text="'City: ' + ${addressCity}" />
+	   <p th:text="'State: ' + ${addressState}" />
+	</div>
+	<br/>
+	<br/>
+	<div id="suggested-values">
+		<p th:text="'Suggested Image Count: ' + ${newImageCount}" />
+	    <p th:text="'Suggested Bedroom Count: ' + ${newBedroomCount}" />
+	    <p th:text="'Suggested Bathroom Count: ' + ${newBathroomCount}" />
+	    <p th:text="'Making these changes, you can expect a page view count increase of ' + ${predictedViewCountIncrease} + ' views in the next 30 days'" />
+	</div>
+</body>
+
 </html>
