@@ -26,7 +26,7 @@ public class AlgorithmController {
 	protected RManager rmanager;
 	protected PageViewPredictionManager pageViewPredictionManager;
 	
-    @RequestMapping("/Rserve")
+    @RequestMapping("/no-sidebar")
     public String getRserveData(@RequestParam(value="zpid", required=false, defaultValue="-") String zpid, Model model) {
     	RestApiManager restApiManager = new RestApiManager();
     	Document doc = restApiManager.getProperyDetails(ZillowGlobals.ZWS_ID, zpid);
@@ -75,6 +75,8 @@ public class AlgorithmController {
         	if(images != null) {
         		imageCount = toInteger(images.getChildText("count"));
         	}
+        	
+        	model.addAttribute("imageUrl",images.getChild("image").getChild("url").getText());
         	
         	String homeDescription = e.getChildText("homeDescription");
         	
@@ -164,7 +166,7 @@ public class AlgorithmController {
         model.addAttribute("name", zpid);
         
         
-        return "rserve";
+        return "no-sidebar";
     }
     
     private static Integer toInteger(String integerStr) {
