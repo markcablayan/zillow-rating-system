@@ -3,55 +3,49 @@ package org.sjsu.cmpe.beans;
 public class ZillowPropertyStage {
 	
 	public long zpID;
-	public int taxAssessmentYear;
-	public double taxAssessment;
-	public int yearBuild;
-	public int lotSizeSquareFt;
-	public int finishedSquareFt;
-	public double bathrooms;
-	public double bedrooms;
-	public double totalRooms;
-	public long soldDate;
-	public double lastSoldPrice;
 	public String addressStreet;
 	public int addressZip;
 	public String addressCity;
 	public String addressState;
 	public double addressLatitude;
 	public double addressLongitude;
-	public int regionId;
-	public int regionType;
-	public String regionName;
+	public int taxAssessmentYear;
+	public double taxAssessment;
+	public int yearBuilt;
+	public int finishedSquareFt;
+	public double bathrooms;
+	public double bedrooms;
+	public double totalRooms;
+	public String lastSoldDate;
+	public double lastSoldPrice;
 	public double zestimateAmount;
-	public long zestimateLastUpdate;
-	public double zestimateValueChange;
-	public double zeestimatePercentile;
-	public int valueChangeDuration;
+	public String zestimateLastUpdate;
 	public double valuationLow;
 	public double valuationHigh;
+	public double zestimatePercentile;
+	
+	public ZillowPropertyStage(){}
 	
 	public ZillowPropertyStage ( long zpID, int taxAssessmentYear,
-			double taxAssessment, int yearBuild, int lotSizeSquareFt,
+			double taxAssessment, int yearBuilt,
 			int finishedSquareFt, double bathrooms, double bedrooms,
-			double totalRooms, long soldDate, double lastSoldPrice,
+			double totalRooms, String lastSoldDate, double lastSoldPrice,
 			String addressStreet, int addressZip, String addressCity,
 			String addressState, double addressLatitude,
-			double addressLongitude, int regionId, int regionType,
-			String regionName, double zestimateAmount,
-			long zestimateLastUpdate, double zestimateValueChange,
-			double zeestimatePercentile, int valueChangeDuration,
+			double addressLongitude, double zestimateAmount,
+			String zestimateLastUpdate,
+			double zestimatePercentile,
 			double valuationLow, double valuationHigh) {
 		
 		this.zpID = zpID;
 		this.taxAssessmentYear = taxAssessmentYear;
 		this.taxAssessment = taxAssessment;
-		this.yearBuild = yearBuild;
-		this.lotSizeSquareFt = lotSizeSquareFt;
+		this.yearBuilt = yearBuilt;
 		this.finishedSquareFt = finishedSquareFt;
 		this.bathrooms = bathrooms;
 		this.bedrooms = bedrooms;
 		this.totalRooms = totalRooms;
-		this.soldDate = soldDate;
+		this.lastSoldDate = lastSoldDate;
 		this.lastSoldPrice = lastSoldPrice;
 		this.addressStreet = addressStreet;
 		this.addressZip = addressZip;
@@ -59,14 +53,9 @@ public class ZillowPropertyStage {
 		this.addressState = addressState;
 		this.addressLatitude = addressLatitude;
 		this.addressLongitude = addressLongitude;
-		this.regionId = regionId;
-		this.regionType = regionType;
-		this.regionName = regionName;
 		this.zestimateAmount = zestimateAmount;
 		this.zestimateLastUpdate = zestimateLastUpdate;
-		this.zestimateValueChange = zestimateValueChange;
-		this.zeestimatePercentile = zeestimatePercentile;
-		this.valueChangeDuration = valueChangeDuration;
+		this.zestimatePercentile = zestimatePercentile;
 		this.valuationLow = valuationLow;
 		this.valuationHigh = valuationHigh;
 	}
@@ -89,17 +78,11 @@ public class ZillowPropertyStage {
 	public void setTaxAssessment(double taxAssessment) {
 		this.taxAssessment = taxAssessment;
 	}
-	public int getYearBuild() {
-		return yearBuild;
+	public int getYearBuilt() {
+		return yearBuilt;
 	}
-	public void setYearBuild(int yearBuild) {
-		this.yearBuild = yearBuild;
-	}
-	public int getLotSizeSquareFt() {
-		return lotSizeSquareFt;
-	}
-	public void setLotSizeSquareFt(int lotSizeSquareFt) {
-		this.lotSizeSquareFt = lotSizeSquareFt;
+	public void setYearBuilt(int yearBuilt) {
+		this.yearBuilt = yearBuilt;
 	}
 	public int getFinishedSquareFt() {
 		return finishedSquareFt;
@@ -125,11 +108,11 @@ public class ZillowPropertyStage {
 	public void setTotalRooms(double totalRooms) {
 		this.totalRooms = totalRooms;
 	}
-	public long getSoldDate() {
-		return soldDate;
+	public String getSoldDate() {
+		return lastSoldDate;
 	}
-	public void setSoldDate(long soldDate) {
-		this.soldDate = soldDate;
+	public void setSoldDate(String lastSoldDate) {
+		this.lastSoldDate = lastSoldDate;
 	}
 	public double getLastSoldPrice() {
 		return lastSoldPrice;
@@ -173,53 +156,23 @@ public class ZillowPropertyStage {
 	public void setAddressLongitude(double addressLongitude) {
 		this.addressLongitude = addressLongitude;
 	}
-	public int getRegionId() {
-		return regionId;
-	}
-	public void setRegionId(int regionId) {
-		this.regionId = regionId;
-	}
-	public int getRegionType() {
-		return regionType;
-	}
-	public void setRegionType(int regionType) {
-		this.regionType = regionType;
-	}
-	public String getRegionName() {
-		return regionName;
-	}
-	public void setRegionName(String regionName) {
-		this.regionName = regionName;
-	}
 	public double getZestimateAmount() {
 		return zestimateAmount;
 	}
 	public void setZestimateAmount(double zestimateAmount) {
 		this.zestimateAmount = zestimateAmount;
 	}
-	public long getZestimateLastUpdate() {
+	public String getZestimateLastUpdate() {
 		return zestimateLastUpdate;
 	}
-	public void setZestimateLastUpdate(long zestimateLastUpdate) {
+	public void setZestimateLastUpdate(String zestimateLastUpdate) {
 		this.zestimateLastUpdate = zestimateLastUpdate;
 	}
-	public double getZestimateValueChange() {
-		return zestimateValueChange;
-	}
-	public void setZestimateValueChange(double zestimateValueChange) {
-		this.zestimateValueChange = zestimateValueChange;
-	}
 	public double getZeestimatePercentile() {
-		return zeestimatePercentile;
+		return zestimatePercentile;
 	}
-	public void setZeestimatePercentile(double zeestimatePercentile) {
-		this.zeestimatePercentile = zeestimatePercentile;
-	}
-	public int getValueChangeDuration() {
-		return valueChangeDuration;
-	}
-	public void setValueChangeDuration(int valueChangeDuration) {
-		this.valueChangeDuration = valueChangeDuration;
+	public void setZeestimatePercentile(double zestimatePercentile) {
+		this.zestimatePercentile = zestimatePercentile;
 	}
 	public double getValuationLow() {
 		return valuationLow;

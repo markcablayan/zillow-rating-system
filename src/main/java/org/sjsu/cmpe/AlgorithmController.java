@@ -1,42 +1,71 @@
 package org.sjsu.cmpe;
 
+import java.util.HashMap;
 import java.util.List;
 
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.filter.Filters;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
+import org.sjsu.cmpe.api.manager.PageViewPredictionManager;
+import org.sjsu.cmpe.api.manager.RManager;
 import org.sjsu.cmpe.api.manager.RestApiManager;
+import org.sjsu.cmpe.beans.ZillowProperty;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.filter.Filters;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 
 @Controller
 public class AlgorithmController {
-
-	public static final String ZWS_ID = "X1-ZWz1dx2j09otmz_4rdd9";
+	
+	protected RManager rmanager;
+	protected PageViewPredictionManager pageViewPredictionManager;
+	
     @RequestMapping("/Rserve")
-    public String greeting(@RequestParam(value="zpid", required=false, defaultValue="-") String zpid, Model model) {
+    public String getRserveData(@RequestParam(value="zpid", required=false, defaultValue="-") String zpid, Model model) {
     	RestApiManager restApiManager = new RestApiManager();
-    	Document doc = restApiManager.getProperyDetails(ZWS_ID, zpid);
+    	Document doc = restApiManager.getProperyDetails(ZillowGlobals.ZWS_ID, zpid);
     	XPathFactory xFactory = XPathFactory.instance();
         XPathExpression<Element> expr = xFactory.compile("//response", Filters.element());
         //SAXBuilder builder = new SAXBuilder();
         List<Element> compElements = expr.evaluate(doc);
+        if(compElements.size() <= 0) {
+        	model.addAttribute("postPrivate", true);
+        	return null;
+        } else {
+        	model.addAttribute("postPrivate", false);
+        }
         Element e = null;
 		if(compElements != null && compElements.size() > 0)
 			e = compElements.get(0);
 
-        if(e != null) {
+		Document comparableDoc = restApiManager.getPropertyComparables(ZillowGlobals.ZWS_ID, zpid, 1);
+		XPathFactory compXPathFactory = XPathFactory.instance();
+        XPathExpression<Element> compExpression = compXPathFactory.compile("//principal", Filters.element());
+		List<Element> comparableElements = compExpression.evaluate(comparableDoc);
+		Element c = null;
+		if(comparableElements != null && comparableElements.size() > 0)
+			c = comparableElements.get(0);
+		
+        if(e != null && c != null) {
         	//Get zpid
         	Integer id = toInteger(e.getChildText("zpid"));
         	
         	//Get address info
+        	Element address = e.getChild("address");
+        	String addressStreet = address.getChildText("street");
+        	Integer addressZipCode = toInteger(address.getChildText("zipcode"));
+        	String addressCity = address.getChildText("city");
+        	String addressState = address.getChildText("state");
+        	Double addressLatitude = toDouble(address.getChildText("latitude"));
+        	Double addressLongitude = toDouble(address.getChildText("longitude"));
+        	
+        	//Get view count info
         	Element pageViewCount = e.getChild("pageViewCount");
         	Integer totalPageViewCount = toInteger(pageViewCount.getChildText("total"));
         	
@@ -52,9 +81,85 @@ public class AlgorithmController {
         	model.addAttribute("totalPageViewCount",totalPageViewCount);
         	model.addAttribute("imageCount",imageCount);
         	model.addAttribute("homeDescription",homeDescription);
+        	model.addAttribute("addressStreet",addressStreet);
+        	model.addAttribute("addressZipCode",addressZipCode);
+        	model.addAttribute("addressCity",addressCity);
+        	model.addAttribute("addressState",addressState);
+        	model.addAttribute("addressLatitude",addressLatitude);
+        	model.addAttribute("addressLongitude",addressLongitude);
+        	
+
+        	Double taxAssessment = toDouble(c.getChildText("taxAssessment"));
+        	Integer finishedSqFt = toInteger(c.getChildText("finishedSqFt"));
+        	Double bathrooms = toDouble(c.getChildText("bathrooms"));
+        	Double bedrooms = toDouble(c.getChildText("bedrooms"));
+        	Double totalRooms = toDouble(c.getChildText("totalRooms"));
+        	Double lastSoldPrice = (toDouble(c.getChildText("lastSoldPrice")) == null)? 0 : toDouble(c.getChildText("lastSoldPrice"));
+        	Element zestimate = c.getChild("zestimate");
+        	Double zestimateAmount = toDouble(zestimate.getChildText("amount"));
+        	Element valuationRange = zestimate.getChild("valuationRange");
+        	Double valuationLow = toDouble(valuationRange.getChildText("low"));
+        	Double valuationHigh = toDouble(valuationRange.getChildText("high"));
+        	Double percentile = toDouble(zestimate.getChildText("percentile"));
+        	
         	//zillowDao.insertPropertyDetail(zpid, totalPageViewCount, (imageCount == null)? 0 : imageCount, homeDescription);
+        	ZillowProperty zp = new ZillowProperty();
+        	zp.setTaxAssessment(taxAssessment);
+        	zp.setFinishedSquareFt(finishedSqFt);
+        	zp.setBathrooms(bathrooms);
+        	zp.setBedrooms(bedrooms);
+        	zp.setTotalRooms(totalRooms);
+        	zp.setLastSoldPrice(lastSoldPrice);
+        	zp.setZestimateAmount(zestimateAmount);
+        	zp.setValuationLow(valuationLow);
+        	zp.setValuationHigh(valuationHigh);
+        	zp.setZeestimatePercentile(percentile);
+        	zp.setImageCount(imageCount);
+        	zp.setPageViewCount(totalPageViewCount);
+        	
+        	model.addAttribute("bedrooms",zp.getBedrooms());
+        	model.addAttribute("bathrooms",zp.getBathrooms());
+        	
+        	RConnection r = rmanager.getRConnection();
+            if(r != null) {
+            	try {
+            		r.voidEval(RManager.MODEL_EQUATION);
+            		String dataFrame = "newdata = data.frame("
+            				+ "tax_assessment=" + taxAssessment + ","
+            				+ "finished_sq_ft=" + finishedSqFt + ","
+            				+ "bathroom_count=" + bathrooms + ","
+            				+ "bedroom_count=" + bedrooms + ","
+            				+ "total_room_count=" + totalRooms + ","
+            				+ "last_sold_price=" + lastSoldPrice + ","
+            				+ "zestimate_amount=" + zestimateAmount + ","
+            				+ "valuation_low=" + valuationLow + ","
+            				+ "valuation_high=" + valuationHigh + ","
+            				+ "percentile=" + percentile + ","
+            				+ "image_count=" + imageCount 
+            				+ ")";
+            		r.eval(dataFrame);
+            		REXP prediction = r.eval("predict(fit,newdata)");
+            		
+            		try {
+            			HashMap<String,Double> imageAdjustedpageViewResults = pageViewPredictionManager.calculateVariableIncreaseImageCount(r, zp);
+            			HashMap<String,Double> bedroomAdjustedpageViewResults = pageViewPredictionManager.calculateVariableIncreaseBedroomCount(r, zp);
+            			HashMap<String,Double> bathroomAdjustedpageViewResults = pageViewPredictionManager.calculateVariableIncreaseBathroomCount(r, zp);
+            			Double predictedViewCount = (imageAdjustedpageViewResults.get("predictedViewCount") + bedroomAdjustedpageViewResults.get("predictedViewCount") + bathroomAdjustedpageViewResults.get("predictedViewCount")) / 3;
+            			model.addAttribute("newImageCount", imageAdjustedpageViewResults.get("newImageCount"));
+            			model.addAttribute("newBedroomCount", bedroomAdjustedpageViewResults.get("newBedroomCount"));
+            			model.addAttribute("newBathroomCount", bathroomAdjustedpageViewResults.get("newBathroomCount"));
+            			
+            			model.addAttribute("predictedViewCountIncrease",predictedViewCount.intValue() - zp.getPageViewCount());
+            			
+						System.out.println(prediction.asDouble() + PageViewPredictionManager.MODEL_DELTA_VALUE);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+    			} catch (RserveException e1) {
+    				e1.printStackTrace();
+    			}
+            }
         }
-        
         
         model.addAttribute("name", zpid);
         
@@ -76,4 +181,21 @@ public class AlgorithmController {
 			return new Double(doubleStr);
 	}
 
+	public RManager getRmanager() {
+		return rmanager;
+	}
+
+	public void setRmanager(RManager rmanager) {
+		this.rmanager = rmanager;
+	}
+
+	public PageViewPredictionManager getPageViewPredictionManager() {
+		return pageViewPredictionManager;
+	}
+
+	public void setPageViewPredictionManager(
+			PageViewPredictionManager pageViewPredictionManager) {
+		this.pageViewPredictionManager = pageViewPredictionManager;
+	}
+	
 }

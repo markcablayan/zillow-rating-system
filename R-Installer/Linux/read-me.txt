@@ -1,0 +1,1 @@
+Install R by going to http://cran.cnr.berkeley.edu/ , choosing your linux distro and installing the necessary package(s)
