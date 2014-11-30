@@ -11,13 +11,19 @@ public class GreetingController {
     @RequestMapping("/greeting")
     public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
         model.addAttribute("name", name);
-        return "greeting1";
+        return "greeting";
     }
     
     @RequestMapping("/index")
-    public String greeting() {
+    public String getIndex() {
         
-        return "index";
+        return "zillow_home";
+    }
+    
+    @RequestMapping("/rating")
+    public String getRating() {
+        
+        return "zillow_rate";
     }
 
 }
