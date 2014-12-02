@@ -11,10 +11,10 @@ public class HomePageController {
         return "zillow_home";
     }
     
-    @RequestMapping("/index")
-    public String index() {
-        return "index";
-    }
+//    @RequestMapping("/index")
+//    public String index() {
+//        return "index";
+//    }
     
     @RequestMapping("left-sidebar")
     public String leftSidebar() {

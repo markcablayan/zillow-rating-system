@@ -81,14 +81,14 @@
 						        <p th:text="${homeDescription}" />
 
 								
-								<h4 th:text="'Bedrooms:&nbsp;&nbsp;' + ${bedrooms}"></h4>
-								<h4 th:text="'Bedrooms:&nbsp;&nbsp;' + ${bathrooms}"></h4>
+								<p th:text="'Bedrooms:&nbsp;&nbsp;' + ${bedrooms}" />
+								<p th:text="'Bedrooms:&nbsp;&nbsp;' + ${bathrooms}"/>
 								
 								<div id="suggested-values">
-									<p th:text="'Suggested Image Count: ' + ${newImageCount}" />
-								    <p th:text="'Suggested Bedroom Count: ' + ${newBedroomCount}" />
-								    <p th:text="'Suggested Bathroom Count: ' + ${newBathroomCount}" />
-								    <p th:text="'Making these changes, you can expect a page view count increase of ' + ${predictedViewCountIncrease} + ' views in the next 30 days'" />
+									<h4 th:text="'Suggested Image Count: ' + ${newImageCount}" ></h4>
+								    <h4 th:text="'Suggested Bedroom Count: ' + ${newBedroomCount}" ></h4>
+								    <h4 th:text="'Suggested Bathroom Count: ' + ${newBathroomCount}" ></h4>
+								    <h4 th:text="'Making these changes, you can expect a page view count increase of ' + ${predictedViewCountIncrease} + ' views in the next 30 days'"></h4>
 								</div>
 							</article>
 				
